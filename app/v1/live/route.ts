@@ -43,9 +43,28 @@ export async function GET(req: Request) {
   const building_id = searchParams.get("building_id") ?? "main_building";
 
   // JST = UTC+9
-  const now = new Date();
-  const nowJST = new Date(now.getTime() + 9 * 60 * 60 * 1000);
-  // nowJST.setSeconds(0, 0);
+  // const now = new Date();
+  // const nowJST = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+
+  // Virtual Time Logic: Loop 11:30:00 - 14:00:00 (9000 seconds window)
+  const nowUnix = Math.floor(Date.now() / 1000);
+  const LOOP_DURATION = 9000; // 2.5 hours = 9000 seconds
+  const START_SEC_TOTAL = 11 * 3600 + 30 * 60; // 11:30:00 => 41400 sec
+
+  const elapsed = nowUnix % LOOP_DURATION;
+  const virtualTotalSec = START_SEC_TOTAL + elapsed;
+
+  const vh = Math.floor(virtualTotalSec / 3600);
+  const vm = Math.floor((virtualTotalSec % 3600) / 60);
+  const vs = virtualTotalSec % 60;
+
+  const nowJST = new Date();
+  // Set the virtual time components (treating them as UTC components for the sake of FMT/pickRow which use getUTC*)
+  nowJST.setUTCHours(vh);
+  nowJST.setUTCMinutes(vm);
+  nowJST.setUTCSeconds(vs);
+  // Date part remains today (from new Date())
+
 
   const row = pickRowByTimeOfDay(nowJST);
 
