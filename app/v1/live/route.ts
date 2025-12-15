@@ -53,10 +53,10 @@ export async function GET(req: Request) {
   let nowJST: Date;
 
   if (currentUnix < CUTOFF_TIME) {
-    // === VIRTUAL SIMULATION MODE (Loop 11:30 - 14:00) ===
+    // === VIRTUAL SIMULATION MODE (Loop 12:00:00 - 13:00:00) ===
     const nowUnix = Math.floor(currentUnix / 1000);
-    const LOOP_DURATION = 9000; // 2.5 hours = 9000 seconds
-    const START_SEC_TOTAL = 11 * 3600 + 30 * 60; // 11:30:00 => 41400 sec
+    const LOOP_DURATION = 3600; // 1 hour = 3600 seconds
+    const START_SEC_TOTAL = 12 * 3600; // 12:00:00 => 43200 sec
 
     const elapsed = nowUnix % LOOP_DURATION;
     const virtualTotalSec = START_SEC_TOTAL + elapsed;
