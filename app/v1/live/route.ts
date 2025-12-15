@@ -53,7 +53,7 @@ export async function GET(req: Request) {
     {
       building_id,
       datetime: FMT(nowJST),
-      W: 0,
+      W: Number(row.W) || 0,
       in_1ave3: Number(row.in_1ave3) || 0,
       in_2ave5: Number(row.in_2ave5) || 0,
       d1: Number(row.d1) || 0,
