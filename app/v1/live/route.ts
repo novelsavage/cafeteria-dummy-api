@@ -46,34 +46,9 @@ export async function GET(req: Request) {
   const now = new Date();
   const currentUnix = now.getTime();
 
-  // Cutoff: 2025-12-16 11:30:00 JST
-  // ISO string with offset ensures correct absolute time comparison
-  const CUTOFF_TIME = new Date("2025-12-16T11:30:00+09:00").getTime();
-
-  let nowJST: Date;
-
-  if (currentUnix < CUTOFF_TIME) {
-    // === VIRTUAL SIMULATION MODE (Loop 12:00:00 - 13:00:00) ===
-    const nowUnix = Math.floor(currentUnix / 1000);
-    const LOOP_DURATION = 3600; // 1 hour = 3600 seconds
-    const START_SEC_TOTAL = 12 * 3600; // 12:00:00 => 43200 sec
-
-    const elapsed = nowUnix % LOOP_DURATION;
-    const virtualTotalSec = START_SEC_TOTAL + elapsed;
-
-    const vh = Math.floor(virtualTotalSec / 3600);
-    const vm = Math.floor((virtualTotalSec % 3600) / 60);
-    const vs = virtualTotalSec % 60;
-
-    nowJST = new Date();
-    // Set virtual time (treated as local components for simplicity in this context)
-    nowJST.setUTCHours(vh);
-    nowJST.setUTCMinutes(vm);
-    nowJST.setUTCSeconds(vs);
-  } else {
-    // === REAL TIME MODE (After 11:30 on 12/16) ===
-    nowJST = new Date(currentUnix + 9 * 60 * 60 * 1000);
-  }
+  // === REAL TIME MODE ===
+  // Always use real time relative to JST (UTC+9)
+  const nowJST = new Date(currentUnix + 9 * 60 * 60 * 1000);
 
 
   const row = pickRowByTimeOfDay(nowJST);
